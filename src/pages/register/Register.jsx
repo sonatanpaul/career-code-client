@@ -1,10 +1,21 @@
+import { useAuth } from "../../contexts/AuthContext";
+
 export default function Register() {
-  const handleRegister = (e) => {
+  const { createUserRegister } = useAuth();
+
+  const handleRegister = async (e) => {
     e.preventDefault();
     const form = e.target;
     const email = form.email.value;
     const password = form.password.value;
-    console.log(email, password);
+
+    try {
+      const response = await createUserRegister(email, password);
+      const result = response.user;
+      console.log(result);
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
   return (
