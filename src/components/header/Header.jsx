@@ -42,8 +42,11 @@ export default function Header() {
         <div className="navbar-center hidden lg:flex">
           <ul className="menu menu-horizontal px-1">{navLinks}</ul>
         </div>
-        <div className="navbar-end">
-          <Link to={"/register"} className="btn">
+        <div className="navbar-end ">
+          <Link to={"/login"} className="btn btn-outline btn-success">
+            Login
+          </Link>
+          <Link to={"/register"} className="btn btn-outline btn-info ml-2">
             Register
           </Link>
         </div>
