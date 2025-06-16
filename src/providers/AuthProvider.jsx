@@ -1,15 +1,28 @@
 import {
   createUserWithEmailAndPassword,
   getAuth,
+  onAuthStateChanged,
   signInWithEmailAndPassword,
+  signOut,
 } from "firebase/auth";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 import { app } from "../firebase/firebase.init";
 
 const auth = getAuth(app);
 export default function AuthProvider({ children }) {
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // Monitor auth state Change
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
+  }, []);
+  console.log("Monitor auth state Change", user);
+
   // Register
   const createUserRegister = (email, password) => {
     setLoading(true);
@@ -21,12 +34,28 @@ export default function AuthProvider({ children }) {
     return signInWithEmailAndPassword(auth, email, password);
   };
 
-  const authState = {
+  // sign out user
+  const logoutUser = async () => {
+    try {
+      setLoading(true);
+      await signOut(auth);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const authValue = {
+    // State
+    user,
     loading,
+    // Actions
     createUserRegister,
     createUserLogin,
+    logoutUser,
   };
   return (
-    <AuthContext.Provider value={authState}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={authValue}>{children}</AuthContext.Provider>
   );
 }

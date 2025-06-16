@@ -1,6 +1,9 @@
 import { Link, NavLink } from "react-router";
+import { useAuth } from "../../contexts/AuthContext";
 
 export default function Header() {
+  const { user, logoutUser } = useAuth();
+
   const navLinks = (
     <>
       <li>
@@ -8,6 +11,14 @@ export default function Header() {
       </li>
     </>
   );
+
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <>
@@ -43,12 +54,23 @@ export default function Header() {
           <ul className="menu menu-horizontal px-1">{navLinks}</ul>
         </div>
         <div className="navbar-end ">
-          <Link to={"/login"} className="btn btn-outline btn-success">
-            Login
-          </Link>
-          <Link to={"/register"} className="btn btn-outline btn-info ml-2">
-            Register
-          </Link>
+          {user ? (
+            <button
+              onClick={handleLogout}
+              className="btn btn-outline btn-accent"
+            >
+              Sign Out
+            </button>
+          ) : (
+            <>
+              <Link to={"/login"} className="btn btn-outline btn-success">
+                Login
+              </Link>
+              <Link to={"/register"} className="btn btn-outline btn-info ml-2">
+                Register
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </>
